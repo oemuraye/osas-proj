@@ -1,31 +1,39 @@
+// Personal API Key for OpenWeatherMap API
+const baseURL = 'https://openweathermap.org/data/2.5/weather?zip=';
+const apiKey = 'eb8bf39a3a432dd3a2d2743f87965ee7&units=imperial';
+
+
 /* Global Variables */
 const dateElement = document.getElementById('date');
 const tempElement = document.getElementById('temp');
 const userFeelings = document.getElementById('user_feelings');
 
-// Personal API Key for OpenWeatherMap API
-const baseURL = 'https://openweathermap.org/data/2.5/weather?zip=';
-// const baseURL = 'http://api.openweathermap.org/data/2.5/forecast?id=524901&appid=';
-const apiKey = 'eb8bf39a3a432dd3a2d2743f87965ee7';
 
 // document.getElementById("generate").addEventListener("click", () => {alert('shdsid')});
 
 // Create a new date instance dynamically with JS
 let d = new Date();
-let newDate = d.getMonth()+'.'+ d.getDate()+'.'+ d.getFullYear();
+let newDate = d.getMonth()+1 + '.' + d.getDate() + '.' + d.getFullYear();
 
 // Event listener to add function to existing HTML DOM element
 document.getElementById('generate').addEventListener('click', ()=> {
     const userZip = document.getElementById('zip').value;
     const feeling = document.getElementById('feelings').value;
-   //api call
-   getWeatherInfo(baseURL, userZip, apiKey)
-   .then((data)=>{
-       //call postWeather to send data to the server
-       postWeatherData('/addWeatherInfo', {temp: data, date: newDate, feeling: feeling})
-   })
-   //call update UI
-   .then(()=>updateUI());
+
+    if (userZip && feeling !== 'default') {
+        //api call
+        getWeatherInfo(baseURL, userZip, apiKey)
+        .then(data => {
+            //call postWeather to send data to the server
+            postWeatherData('http://localhost:5000/addWeatherInfo', data)
+            .then(() => {
+                //call update UI
+                updateUI();
+            })
+        })
+    } else {
+        alert('Please enter a valid zip code and select a feeling.');
+    }
 });
 
 
@@ -42,8 +50,6 @@ const getWeatherInfo = async (baseURL, userZip, Key) => {
     console.log("error", error);
   }
 };
-
-
 
 /* Function to POST data */
 const postWeatherData = async (url = 'http://localhost:5000/addWeatherInfo', data = {} ) => {
@@ -70,9 +76,9 @@ const updateUI = async () => {
     try {
         const allData = await request.json();
         console.log(allData);
-        dateElement.textContent = allData.date;
-        tempElement.textContent = allData.temp;
-        userFeelings.textContent = allData.user_feelings;
+        dateElement.innerHTML = allData.date;
+        tempElement.innerHTML = allData.temp;
+        userFeelings.innerHTML = allData.user_feelings;
     } catch (error) {
         console.log(error);
     }
