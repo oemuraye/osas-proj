@@ -9,8 +9,6 @@ const tempElement = document.getElementById('temp');
 const userFeelings = document.getElementById('user_feelings');
 
 
-// document.getElementById("generate").addEventListener("click", () => {alert('shdsid')});
-
 // Create a new date instance dynamically with JS
 let d = new Date();
 let newDate = d.getMonth()+1 + '.' + d.getDate() + '.' + d.getFullYear();
@@ -28,7 +26,7 @@ document.getElementById('generate').addEventListener('click', ()=> {
             postWeatherData('http://localhost:5000/addWeatherInfo', data)
             .then(() => {
                 //call update UI
-                updateUI();
+                updateWebpage();
             })
         })
     } else {
@@ -71,7 +69,7 @@ const postWeatherData = async (url = 'http://localhost:5000/addWeatherInfo', dat
 }
 
 // Update UI
-const updateUI = async () => {
+const updateWebpage = async () => {
     const request = await fetch('http://localhost:5000/all');
     try {
         const allData = await request.json();
